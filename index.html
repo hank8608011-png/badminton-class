@@ -1,113 +1,52 @@
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-<title>羽球課程</title>
-
-<style>
-
-table{
-border-collapse:collapse;
-width:80%;
-}
-
-td,th{
-border:1px solid #aaa;
-padding:10px;
-}
-
-</style>
-
-</head>
-
-
-<body>
-
-
-<h1>
-羽球課程表
-</h1>
-
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>日期</th>
-<th>時間</th>
-<th>地點</th>
-<th>剩餘名額</th>
-
-</tr>
-
-</thead>
-
-
-<tbody id="course">
-
-</tbody>
-
-
-</table>
-
-
-
-<script>
-
-
-const api =
-"https://script.google.com/macros/s/AKfycbzu-M0_qs6V3jDKA1DjfHcDV3NJWMxeQ-AplOEaw5gksgWumrA8W6KiYEC46jURl6qf/exec";
-
-
-
 fetch(api)
 
-.then(response=>response.json())
+.then(response => response.json())
 
-.then(data=>{
+.then(data => {
+
+    let html = "";
+
+    data.forEach(course => {
+
+        // 日期格式轉換
+        let date = new Date(course.date);
+
+        let dateText =
+            date.getFullYear() + "/" +
+            String(date.getMonth()+1).padStart(2,'0') + "/" +
+            String(date.getDate()).padStart(2,'0');
 
 
-let html="";
+        let remainText =
+            course.remain === 0
+            ? "已額滿"
+            : "剩 " + course.remain + " 位";
 
 
-data.forEach(course=>{
+        html += `
+
+        <tr>
+
+            <td>${dateText}</td>
+
+            <td>${course.time}</td>
+
+            <td>${course.location}</td>
+
+            <td>${course.max} 人</td>
+
+            <td>${course.joined} 人</td>
+
+            <td>${remainText}</td>
+
+        </tr>
+
+        `;
+
+    });
 
 
-html += `
-
-<tr>
-
-<td>${course.date}</td>
-
-<td>${course.time}</td>
-
-<td>${course.location}</td>
-
-<td>
-${course.remain} 位
-</td>
-
-</tr>
-
-`;
+    document.getElementById("course")
+    .innerHTML = html;
 
 });
-
-
-document.getElementById("course")
-.innerHTML=html;
-
-
-});
-
-
-</script>
-
-
-</body>
-
-</html>
