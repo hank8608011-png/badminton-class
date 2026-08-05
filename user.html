@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽球課程報名 | 學員報名</title>
+  <meta name="description" content="線上查看羽球課程資訊，即時報名，掌握剩餘名額">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="site-logo">
+      <div class="logo-icon">🏸</div>
+      <span>羽球課程</span>
+    </a>
+    <nav class="site-nav">
+      <a href="coach.html" class="btn btn-secondary btn-sm">教練入口</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── Hero ────────────────────────────────────────────────── -->
+<section class="page-hero">
+  <div class="container">
+    <h1>課程報名</h1>
+    <p>查看最新課程，即時掌握剩餘名額</p>
+  </div>
+</section>
+
+<!-- ── Course List ──────────────────────────────────────────── -->
+<main class="container">
+  <div id="courses-container">
+    <div class="loader-wrap">
+      <div class="spinner"></div>
+      <p>載入課程中…</p>
+    </div>
+  </div>
+</main>
+
+<!-- ── Course Detail Modal ─────────────────────────────────── -->
+<div class="modal-overlay" id="detail-overlay">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2 id="detail-title">課程詳細</h2>
+      <button class="modal-close" id="detail-close">✕</button>
+    </div>
+    <div class="modal-body" id="detail-body">
+      <div class="loader-wrap"><div class="spinner"></div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="detail-close-btn">關閉</button>
+      <button class="btn btn-primary" id="open-register-btn">✍️ 立即報名</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Register Form Modal ─────────────────────────────────── -->
+<div class="modal-overlay" id="register-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>填寫報名資料</h2>
+      <button class="modal-close" id="register-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="register-course-info" style="
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px 14px;
+        margin-bottom: 20px;
+        font-size: 0.875rem;
+        color: var(--text-2);
+      "></div>
+
+      <form id="register-form" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="reg-name">姓名 <span class="required">*</span></label>
+            <input type="text" id="reg-name" class="form-input" placeholder="王小明" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-phone">手機 <span class="required">*</span></label>
+            <input type="tel" id="reg-phone" class="form-input" placeholder="0912345678" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reg-count">報名人數 <span class="required">*</span></label>
+          <input type="number" id="reg-count" class="form-input" min="1" max="20" value="1" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-notes">備註（選填）</label>
+          <textarea id="reg-notes" class="form-textarea" placeholder="如有需要說明的事項請填寫…"></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="register-back-btn">← 返回詳情</button>
+      <button class="btn btn-primary btn-lg" id="submit-register-btn">確認報名</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ────────────────────────────────────────────────── -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="config.js"></script>
+<script src="user.js"></script>
+</body>
+</html>

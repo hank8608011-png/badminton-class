@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽球課程報名系統</title>
+  <meta name="description" content="專業羽球課程報名系統，即時查看課程、線上報名，方便快速">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .hero-section {
+      min-height: calc(100vh - 64px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      background:
+        radial-gradient(ellipse 800px 400px at 50% 0%, rgba(124,58,237,0.15), transparent),
+        radial-gradient(ellipse 600px 300px at 80% 80%, rgba(6,182,212,0.08), transparent);
+    }
+
+    .hero-inner { max-width: 640px; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(124,58,237,0.1);
+      border: 1px solid rgba(124,58,237,0.25);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      color: #a78bfa;
+      margin-bottom: 28px;
+      font-weight: 500;
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .hero-title .highlight {
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-desc {
+      color: var(--text-2);
+      font-size: 1.1rem;
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-cta .btn { min-width: 160px; }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 64px;
+      text-align: left;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .feature-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .feature-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .feature-desc {
+      font-size: 0.8rem;
+      color: var(--text-3);
+      line-height: 1.5;
+    }
+
+    .tech-stack {
+      margin-top: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 0.75rem;
+      color: var(--text-3);
+    }
+
+    .tech-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="site-logo">
+      <div class="logo-icon">🏸</div>
+      <span>羽球課程報名</span>
+    </a>
+    <nav class="site-nav">
+      <a href="user.html" class="btn btn-secondary btn-sm">學員報名</a>
+      <a href="coach.html" class="btn btn-primary btn-sm">教練後台</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero-section">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span>🏸</span>
+      <span>零伺服器 · 全雲端架構</span>
+    </div>
+
+    <h1 class="hero-title">
+      羽球課程<br>
+      <span class="highlight">線上報名系統</span>
+    </h1>
+
+    <p class="hero-desc">
+      專為羽球教練設計的課程管理系統<br>
+      學員即時查看名額・線上報名・教練輕鬆管理
+    </p>
+
+    <div class="hero-cta">
+      <a href="user.html" class="btn btn-primary btn-lg">
+        🏸 查看課程 / 報名
+      </a>
+      <a href="coach.html" class="btn btn-secondary btn-lg">
+        📋 教練管理後台
+      </a>
+    </div>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">即時課程資訊</div>
+        <div class="feature-desc">即時顯示課程日期、時間、地點、剩餘名額</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✍️</div>
+        <div class="feature-title">線上快速報名</div>
+        <div class="feature-desc">填寫姓名手機即可完成報名，秒速確認</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <div class="feature-title">繳費狀態追蹤</div>
+        <div class="feature-desc">教練可管理每筆報名的繳費與退費狀態</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">☁️</div>
+        <div class="feature-title">全雲端免維護</div>
+        <div class="feature-desc">GitHub Pages + Google Apps Script，不需要自己架主機</div>
+      </div>
+    </div>
+
+    <div class="tech-stack">
+      <span>技術架構：</span>
+      <span class="tech-chip">GitHub Pages</span>
+      <span>+</span>
+      <span class="tech-chip">Google Apps Script</span>
+      <span>+</span>
+      <span class="tech-chip">Google Sheets</span>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

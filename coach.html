@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽球課程 | 教練管理後台</title>
+  <meta name="description" content="教練課程管理後台：新增課程、管理報名、更新繳費狀態">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ── 登入畫面 ────────────────────────────────────────────── -->
+<div id="login-screen" style="
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+">
+  <div style="
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 40px 36px;
+    width: 100%; max-width: 380px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+  ">
+    <div style="
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; margin: 0 auto 20px;
+    ">🏸</div>
+    <h1 style="font-size:1.3rem;margin-bottom:6px">教練管理後台</h1>
+    <p style="color:var(--text-3);font-size:.875rem;margin-bottom:28px">請輸入密碼以繼續</p>
+    <div class="form-group" style="text-align:left">
+      <label for="login-pw">密碼</label>
+      <input type="password" id="login-pw" class="form-input"
+        placeholder="請輸入密碼" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+    <p id="login-error" style="color:var(--danger);font-size:.8rem;min-height:1.2em;margin-bottom:12px"></p>
+    <button class="btn btn-primary btn-full btn-lg" onclick="doLogin()">登入</button>
+  </div>
+</div>
+
+<!-- ── Header ──────────────────────────────────────────────── -->
+<header class="site-header" id="coach-header" style="display:none">
+  <div class="container">
+    <a href="index.html" class="site-logo">
+      <div class="logo-icon">🏸</div>
+      <span>教練後台</span>
+    </a>
+    <nav class="site-nav">
+      <a href="user.html" class="btn btn-secondary btn-sm">學員頁面</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── Main ────────────────────────────────────────────────── -->
+<main class="container" id="coach-main" style="padding-top: 32px; padding-bottom: 48px; display:none">
+
+  <!-- Stats Bar -->
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat-card">
+      <div class="stat-number" id="stat-total" style="color:var(--accent)">—</div>
+      <div class="stat-label">總課程數</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="stat-open" style="color:var(--success)">—</div>
+      <div class="stat-label">開放中</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="stat-closed" style="color:var(--text-3)">—</div>
+      <div class="stat-label">已關閉</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="stat-regs" style="color:var(--primary)">—</div>
+      <div class="stat-label">總報名人次</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-courses-btn" onclick="switchTab('courses')">📋 課程管理</button>
+    <button class="tab-btn" id="tab-regs-btn" onclick="switchTab('regs')">👥 報名管理</button>
+  </div>
+
+  <!-- ── Tab: 課程管理 ────────────────────────────────────── -->
+  <div class="tab-panel active" id="tab-courses">
+    <div class="section-header">
+      <h2>所有課程</h2>
+      <button class="btn btn-primary" onclick="openCourseModal()">＋ 新增課程</button>
+    </div>
+    <div id="courses-table-wrap">
+      <div class="loader-wrap"><div class="spinner"></div><p>載入中…</p></div>
+    </div>
+  </div>
+
+  <!-- ── Tab: 報名管理 ────────────────────────────────────── -->
+  <div class="tab-panel" id="tab-regs">
+    <div class="section-header">
+      <h2>報名管理</h2>
+      <button class="btn btn-secondary btn-sm" onclick="refreshRegs()">↻ 重新整理</button>
+    </div>
+    <div class="course-selector-wrap">
+      <label for="reg-course-select">選擇課程：</label>
+      <select class="form-select" id="reg-course-select" onchange="loadRegistrations(this.value)">
+        <option value="">— 請選擇課程 —</option>
+      </select>
+    </div>
+    <div id="regs-table-wrap">
+      <div class="empty-state">
+        <div class="icon">👆</div>
+        <p>請先選擇一門課程</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- Modal: 新增 / 修改課程 -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="course-modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="course-modal-title">新增課程</h2>
+      <button class="modal-close" onclick="closeCourseModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-course-id">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="c-date">日期 <span class="required">*</span></label>
+          <input type="date" id="c-date" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label for="c-time">時間 <span class="required">*</span></label>
+          <input type="text" id="c-time" class="form-input" placeholder="例：19:00~21:00" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="c-location">地點 <span class="required">*</span></label>
+          <input type="text" id="c-location" class="form-input" placeholder="南港羽球館" required>
+        </div>
+        <div class="form-group">
+          <label for="c-coach">教練 <span class="required">*</span></label>
+          <input type="text" id="c-coach" class="form-input" placeholder="王教練" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="c-capacity">開放人數 <span class="required">*</span></label>
+          <input type="number" id="c-capacity" class="form-input" min="1" placeholder="20" required>
+        </div>
+        <div class="form-group">
+          <label for="c-fee">費用（元）<span class="required">*</span></label>
+          <input type="number" id="c-fee" class="form-input" min="0" placeholder="500" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="c-notes">備註（選填）</label>
+        <textarea id="c-notes" class="form-textarea" placeholder="如上課器材、注意事項等…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeCourseModal()">取消</button>
+      <button class="btn btn-primary" id="save-course-btn" onclick="saveCourse()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- Modal: 修改報名資料 -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="reg-modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>修改報名資料</h2>
+      <button class="modal-close" onclick="closeRegModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-reg-id">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="r-name">姓名 <span class="required">*</span></label>
+          <input type="text" id="r-name" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label for="r-phone">手機 <span class="required">*</span></label>
+          <input type="tel" id="r-phone" class="form-input" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="r-count">報名人數 <span class="required">*</span></label>
+          <input type="number" id="r-count" class="form-input" min="1" required>
+        </div>
+        <div class="form-group">
+          <label for="r-payment">繳費狀態</label>
+          <select id="r-payment" class="form-select">
+            <option value="unpaid">未繳</option>
+            <option value="paid">已繳</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="r-notes">備註</label>
+        <textarea id="r-notes" class="form-textarea"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeRegModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveReg()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- Modal: 確認刪除 -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="icon">⚠️</div>
+    <h3 id="confirm-title">確認刪除？</h3>
+    <p id="confirm-msg">刪除後無法復原。</p>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="closeConfirm()">取消</button>
+      <button class="btn btn-danger" id="confirm-ok-btn">確認刪除</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ────────────────────────────────────────────────── -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="config.js"></script>
+<script>
+  async function doLogin() {
+    const val = document.getElementById('login-pw').value;
+    if (!val) return;
+    
+    const btn = document.querySelector('#login-screen button');
+    const oldText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '驗證中...';
+    
+    try {
+      const res = await fetch(CONFIG.GAS_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'verifyPassword', password: val })
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        sessionStorage.setItem('coach_auth', '1');
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('coach-main').style.display = '';
+        document.getElementById('coach-header').style.display = '';
+        
+        // 驗證成功後載入課程
+        if (typeof loadCourses === 'function') loadCourses();
+      } else {
+        document.getElementById('login-error').textContent = '密碼錯誤，請再試一次';
+        document.getElementById('login-pw').value = '';
+        document.getElementById('login-pw').focus();
+      }
+    } catch (err) {
+      document.getElementById('login-error').textContent = '連線失敗，請稍後再試';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = oldText;
+    }
+  }
+
+  // 本次 session 已驗證則直接跳過登入
+  if (sessionStorage.getItem('coach_auth') === '1') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('coach-main').style.display = '';
+    document.getElementById('coach-header').style.display = '';
+    // 延遲一點確保 coach.js 載入
+    setTimeout(() => {
+      if (typeof loadCourses === 'function') loadCourses();
+    }, 50);
+  } else {
+    // 延遲聚焦讓畫面先渲染
+    setTimeout(() => document.getElementById('login-pw').focus(), 100);
+  }
+</script>
+<script src="coach.js"></script>
+</body>
+</html>
