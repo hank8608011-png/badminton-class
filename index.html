@@ -163,14 +163,7 @@ fetch(api)
         let date = new Date(course.date);
 
 
-        let dateText =
-            String(date.getMonth() + 1)
-            .padStart(2, "0")
-            + "/" +
-            String(date.getDate())
-            .padStart(2, "0");
-
-
+        let dateText = course.date;
 
         // ==========================
         // 剩餘名額文字
