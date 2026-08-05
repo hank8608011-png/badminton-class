@@ -1,52 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>羽球課程表</title>
+
+
+<style>
+
+body {
+    font-family: Arial, "Microsoft JhengHei", sans-serif;
+    padding: 20px;
+}
+
+
+h1 {
+    text-align: center;
+}
+
+
+table {
+
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+
+}
+
+
+th {
+
+    background-color: #eeeeee;
+    padding: 12px;
+    border: 1px solid #ccc;
+
+}
+
+
+td {
+
+    padding: 12px;
+    border: 1px solid #ccc;
+    text-align: center;
+
+}
+
+
+.full {
+
+    color: red;
+    font-weight: bold;
+
+}
+
+
+.available {
+
+    color: green;
+    font-weight: bold;
+
+}
+
+
+</style>
+
+</head>
+
+
+
+<body>
+
+
+<h1>🏸 羽球課程表</h1>
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>日期</th>
+
+<th>時間</th>
+
+<th>地點</th>
+
+<th>開放人數</th>
+
+<th>已報名</th>
+
+<th>剩餘名額</th>
+
+</tr>
+
+
+</thead>
+
+
+
+<tbody id="course">
+
+
+<tr>
+
+<td colspan="6">
+資料載入中...
+</td>
+
+</tr>
+
+
+</tbody>
+
+
+</table>
+
+
+
+
+
+<script>
+
+
+// =====================================
+// 修改成你的 Apps Script Web App API
+// =====================================
+
+const api = 
+"https://script.google.com/macros/s/AKfycbzu-M0_qs6V3jDKA1DjfHcDV3NJWMxeQ-AplOEaw5gksgWumrA8W6KiYEC46jURl6qf/exec";
+
+
+
+// 取得課程資料
+
 fetch(api)
+
 
 .then(response => response.json())
 
+
 .then(data => {
+
 
     let html = "";
 
+
+
     data.forEach(course => {
 
-        // 日期格式轉換
+
+
+        // ==========================
+        // 日期格式處理
+        // ==========================
+
         let date = new Date(course.date);
 
+
         let dateText =
-            date.getFullYear() + "/" +
-            String(date.getMonth()+1).padStart(2,'0') + "/" +
-            String(date.getDate()).padStart(2,'0');
+            date.getFullYear()
+            + "/" +
+            String(date.getMonth() + 1)
+            .padStart(2, "0")
+            + "/" +
+            String(date.getDate())
+            .padStart(2, "0");
 
 
-        let remainText =
-            course.remain === 0
-            ? "已額滿"
-            : "剩 " + course.remain + " 位";
+
+        // ==========================
+        // 剩餘名額文字
+        // ==========================
+
+        let remainText;
+
+        let remainClass;
+
+
+
+        if(course.remain <= 0) {
+
+            remainText = "已額滿";
+
+            remainClass = "full";
+
+
+        } else {
+
+
+            remainText =
+            "剩 " + course.remain + " 位";
+
+
+            remainClass = "available";
+
+
+        }
+
+
+
+
+        // ==========================
+        // 建立表格
+        // ==========================
 
 
         html += `
 
         <tr>
 
-            <td>${dateText}</td>
+            <td>
+                ${dateText}
+            </td>
 
-            <td>${course.time}</td>
 
-            <td>${course.location}</td>
+            <td>
+                ${course.time}
+            </td>
 
-            <td>${course.max} 人</td>
 
-            <td>${course.joined} 人</td>
+            <td>
+                ${course.location}
+            </td>
 
-            <td>${remainText}</td>
+
+            <td>
+                ${course.max} 人
+            </td>
+
+
+            <td>
+                ${course.joined} 人
+            </td>
+
+
+            <td class="${remainClass}">
+                ${remainText}
+            </td>
+
 
         </tr>
 
         `;
 
+
     });
+
 
 
     document.getElementById("course")
     .innerHTML = html;
 
+
+
+})
+
+
+
+.catch(error => {
+
+
+    document.getElementById("course")
+    .innerHTML = `
+
+    <tr>
+
+    <td colspan="6">
+
+    讀取資料失敗
+
+    </td>
+
+    </tr>
+
+    `;
+
+
+    console.error(error);
+
+
 });
+
+
+
+</script>
+
+
+
+</body>
+
+</html>
